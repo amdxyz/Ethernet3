@@ -230,6 +230,22 @@ const char* EthernetClass::duplexReport() {
   else return "NO LINK";
   }
 
+void EthernetClass::setRtTimeOut(uint16_t timeout) {
+  w5500.setRetransmissionTime(timeout);
+  }
+
+uint16_t EthernetClass::getRtTimeOut() {
+  return w5500.getRetransmissionTime();
+  }
+
+void EthernetClass::setRtCount(uint8_t count) {
+  w5500.setRetransmissionCount(count);
+  }
+
+uint8_t EthernetClass::getRtCount() {
+  return w5500.getRetransmissionCount();
+  }
+
 void EthernetClass::macAddress(uint8_t mac[]) {
   w5500.getMACAddress(mac);
   }
