@@ -3,7 +3,7 @@
  * Added support for Arduino Ethernet Shield 2
  * by Arduino.org team
  */
- 
+
 #include "utility/w5500.h"
 #include "utility/socket.h"
 
@@ -21,14 +21,14 @@ uint8_t socket(SOCKET s, uint8_t protocol, uint16_t port, uint8_t flag)
     w5500.writeSnMR(s, protocol | flag);
     if (port != 0) {
       w5500.writeSnPORT(s, port);
-    } 
+    }
     else {
       local_port++; // if don't set the source port, set local_port number.
       w5500.writeSnPORT(s, local_port);
     }
 
     w5500.execCmdSn(s, Sock_OPEN);
-    
+
     return 1;
   }
 
@@ -60,19 +60,19 @@ uint8_t listen(SOCKET s)
 
 
 /**
- * @brief	This function established  the connection for the channel in Active (client) mode. 
+ * @brief	This function established  the connection for the channel in Active (client) mode.
  * 		This function waits for the untill the connection is established.
- * 		
+ *
  * @return	1 for success else 0.
  */
 uint8_t connect(SOCKET s, uint8_t * addr, uint16_t port)
 {
-  if 
+  if
     (
   ((addr[0] == 0xFF) && (addr[1] == 0xFF) && (addr[2] == 0xFF) && (addr[3] == 0xFF)) ||
     ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00)) ||
-    (port == 0x00) 
-    ) 
+    (port == 0x00)
+    )
     return 0;
 
   // set destination IP
@@ -105,22 +105,22 @@ uint16_t send(SOCKET s, const uint8_t * buf, uint16_t len)
   uint16_t ret=0;
   uint16_t freesize=0;
 
-  if (len > w5500.SSIZE) 
+  if (len > w5500.SSIZE)
     ret = w5500.SSIZE; // check size not to exceed MAX size.
-  else 
+  else
     ret = len;
 
   // if freebuf is available, start.
-  do 
+  do
   {
     freesize = w5500.getTXFreeSize(s);
     status = w5500.readSnSR(s);
     if ((status != SnSR::ESTABLISHED) && (status != SnSR::CLOSE_WAIT))
     {
-      ret = 0; 
+      ret = 0;
       break;
     }
-  } 
+  }
   while (freesize < ret);
 
   // copy data
@@ -128,7 +128,7 @@ uint16_t send(SOCKET s, const uint8_t * buf, uint16_t len)
   w5500.execCmdSn(s, Sock_SEND);
 
   /* +2008.01 bj */
-  while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
+  while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK )
   {
     /* m2008.01 [bj] : reduce code */
     if ( w5500.readSnSR(s) == SnSR::CLOSED )
@@ -146,7 +146,7 @@ uint16_t send(SOCKET s, const uint8_t * buf, uint16_t len)
 /**
  * @brief	This function is an application I/F function which is used to receive the data in TCP mode.
  * 		It continues to wait for data as much as the application wants to receive.
- * 		
+ *
  * @return	received data size for success else -1.
  */
 int16_t recv(SOCKET s, uint8_t *buf, int16_t len)
@@ -184,7 +184,7 @@ int16_t recv(SOCKET s, uint8_t *buf, int16_t len)
 
 /**
  * @brief	Returns the first byte in the receive queue (no checking)
- * 		
+ *
  * @return
  */
 uint16_t peek(SOCKET s, uint8_t *buf)
@@ -196,9 +196,9 @@ uint16_t peek(SOCKET s, uint8_t *buf)
 
 
 /**
- * @brief	This function is an application I/F function which is used to send the data for other then TCP mode. 
+ * @brief	This function is an application I/F function which is used to send the data for other then TCP mode.
  * 		Unlike TCP transmission, The peer's destination address and the port is needed.
- * 		
+ *
  * @return	This function return send data size for success else -1.
  */
 uint16_t sendto(SOCKET s, const uint8_t *buf, uint16_t len, uint8_t *addr, uint16_t port)
@@ -212,7 +212,7 @@ uint16_t sendto(SOCKET s, const uint8_t *buf, uint16_t len, uint8_t *addr, uint1
     (
   ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00)) ||
     ((port == 0x00)) ||(ret == 0)
-    ) 
+    )
   {
     /* +2008.01 [bj] : added return value */
     ret = 0;
@@ -227,7 +227,7 @@ uint16_t sendto(SOCKET s, const uint8_t *buf, uint16_t len, uint8_t *addr, uint1
     w5500.execCmdSn(s, Sock_SEND);
 
     /* +2008.01 bj */
-    while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
+    while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK )
     {
       if (w5500.readSnIR(s) & SnIR::TIMEOUT)
       {
@@ -246,8 +246,8 @@ uint16_t sendto(SOCKET s, const uint8_t *buf, uint16_t len, uint8_t *addr, uint1
 
 /**
  * @brief	This function is an application I/F function which is used to receive the data in other then
- * 	TCP mode. This function is used to receive UDP, IP_RAW and MAC_RAW mode, and handle the header as well. 
- * 	
+ * 	TCP mode. This function is used to receive UDP, IP_RAW and MAC_RAW mode, and handle the header as well.
+ *
  * @return	This function return received data size for success else -1.
  */
 uint16_t recvfrom(SOCKET s, uint8_t *buf, uint16_t len, uint8_t *addr, uint16_t *port)
@@ -325,12 +325,11 @@ void flush(SOCKET s) {
 
 uint16_t igmpsend(SOCKET s, const uint8_t * buf, uint16_t len)
 {
-  uint8_t status=0;
   uint16_t ret=0;
 
-  if (len > w5500.SSIZE) 
+  if (len > w5500.SSIZE)
     ret = w5500.SSIZE; // check size not to exceed MAX size.
-  else 
+  else
     ret = len;
 
   if (ret == 0)
@@ -339,9 +338,9 @@ uint16_t igmpsend(SOCKET s, const uint8_t * buf, uint16_t len)
   w5500.send_data_processing(s, (uint8_t *)buf, ret);
   w5500.execCmdSn(s, Sock_SEND);
 
-  while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
+  while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK )
   {
-    status = w5500.readSnSR(s);
+    w5500.readSnSR(s);
     if (w5500.readSnIR(s) & SnIR::TIMEOUT)
     {
       /* in case of igmp, if send fails, then socket closed */
@@ -376,7 +375,7 @@ int startUDP(SOCKET s, uint8_t* addr, uint16_t port)
     (
      ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00)) ||
      ((port == 0x00))
-    ) 
+    )
   {
     return 0;
   }
@@ -391,9 +390,9 @@ int startUDP(SOCKET s, uint8_t* addr, uint16_t port)
 int sendUDP(SOCKET s)
 {
   w5500.execCmdSn(s, Sock_SEND);
-		
+
   /* +2008.01 bj */
-  while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK ) 
+  while ( (w5500.readSnIR(s) & SnIR::SEND_OK) != SnIR::SEND_OK )
   {
     if (w5500.readSnIR(s) & SnIR::TIMEOUT)
     {
@@ -403,7 +402,7 @@ int sendUDP(SOCKET s)
     }
   }
 
-  /* +2008.01 bj */	
+  /* +2008.01 bj */
   w5500.writeSnIR(s, SnIR::SEND_OK);
 
   /* Sent ok */

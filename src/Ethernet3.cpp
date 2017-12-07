@@ -201,7 +201,7 @@ const char* EthernetClass::linkReport() {
 uint8_t EthernetClass::speed() {
   if(bitRead(w5500.getPHYCFGR(), 0) == 1) {
     if(bitRead(w5500.getPHYCFGR(), 1) == 1) return 100;
-    if(bitRead(w5500.getPHYCFGR(), 1) == 0) return 10;
+    else return 10;
     }
   else return 0;
   }
@@ -209,7 +209,7 @@ uint8_t EthernetClass::speed() {
 const char* EthernetClass::speedReport() {
   if(bitRead(w5500.getPHYCFGR(), 0) == 1) {
     if(bitRead(w5500.getPHYCFGR(), 1) == 1) return "100 MB";
-    if(bitRead(w5500.getPHYCFGR(), 1) == 0) return "10 MB";
+    else return "10 MB";
     }
   else return "NO LINK";
   }
@@ -217,7 +217,7 @@ const char* EthernetClass::speedReport() {
 uint8_t EthernetClass::duplex() {
   if(bitRead(w5500.getPHYCFGR(), 0) == 1) {
     if(bitRead(w5500.getPHYCFGR(), 2) == 1) return 2;
-    if(bitRead(w5500.getPHYCFGR(), 2) == 0) return 1;
+    else return 1;
     }
   else return 0;
   }
@@ -225,7 +225,7 @@ uint8_t EthernetClass::duplex() {
 const char* EthernetClass::duplexReport() {
   if(bitRead(w5500.getPHYCFGR(), 0) == 1) {
     if(bitRead(w5500.getPHYCFGR(), 2) == 1) return "FULL DUPLEX";
-    if(bitRead(w5500.getPHYCFGR(), 2) == 0) return "HALF DUPLEX";
+    else return "HALF DUPLEX";
     }
   else return "NO LINK";
   }
